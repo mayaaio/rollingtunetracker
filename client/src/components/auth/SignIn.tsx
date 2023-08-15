@@ -23,11 +23,10 @@ function SignIn({ setSignIn }) {
 			await login(form.values.email, form.values.password);
 		} catch (err) {
 			console.log(err);
-			const code = err.code;
-			if (code === "auth/user-not-found") {
-				form.setFieldError("email", "No user with this email found");
-			} else if (code === "auth/wrong-password") {
-				form.setFieldError("password", "Invalid password");
+			const errMessage = err.error;
+			//TODO - Are there user not found/wrong password specific errors in mongodb?
+			if (errMessage === "invalid username/password") {
+				form.setFieldError("email", "invalid username/password");
 			} else {
 				form.setFieldError("password", "Unable to log in");
 			}

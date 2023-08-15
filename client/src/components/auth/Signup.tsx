@@ -23,6 +23,7 @@ function Signup({ setSignIn }) {
 			console.log(result);
 		} catch (err) {
 			console.log(err);
+			console.log(err.error);
 			const code = err.code;
 			if (code === "auth/weak-password") {
 				form.setFieldError(

@@ -1,8 +1,11 @@
 import { AppShell, Group, Header } from "@mantine/core";
-import { Logout } from "../components/auth/Logout";
-import { Table } from "../components/Table";
+import { Logout } from "../components/auth/Logout.tsx";
+import { Table } from "../components/Table.tsx";
+import { useAuth } from "../contexts/AuthContext";
 
 const Home = () => {
+	const { currentUser } = useAuth();
+	console.log(currentUser);
 	return (
 		<AppShell
 			header={

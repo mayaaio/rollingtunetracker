@@ -28,7 +28,7 @@ function Root() {
 				toggleColorScheme={toggleColorScheme}
 			>
 				<MantineProvider
-					theme={{ colorScheme }}
+					theme={{ colorScheme, respectReducedMotion: false }}
 					withGlobalStyles
 					withNormalizeCSS
 				>
