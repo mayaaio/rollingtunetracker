@@ -1,10 +1,11 @@
 import { Center } from "@mantine/core";
 import { useState } from "react";
-import SignIn from "../components/auth/SignIn";
-import Signup from "../components/auth/Signup";
+import SignIn from "../components/auth/SignIn.tsx";
+import Signup from "../components/auth/Signup.tsx";
 
 const NoAuth = () => {
 	const [signIn, setSignIn] = useState(true);
+	console.log("no auth");
 
 	return (
 		<Center my={40}>

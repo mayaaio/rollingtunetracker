@@ -15,6 +15,8 @@ const app = firebase.initializeApp({
 
 export const firestore = app.firestore();
 
+firestore.enablePersistence();
+
 export const db = {
 	albums: firestore.collection("albums"),
 	rankings: firestore.collection("rankings"),
