@@ -2,8 +2,7 @@ import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { config } from "../constants.ts";
 import { useQuery } from "react-query";
 import { useAuth } from "../contexts/AuthContext";
-import { useEffect, useState } from "react";
-import { db } from "../firebase";
+import { useState } from "react";
 import { AlbumModal } from "./AlbumModal.tsx";
 import { MultiSelect } from "@mantine/core";
 import axios from "axios";
@@ -15,15 +14,13 @@ export const Table = () => {
 	const URL = config.url;
 
 	const [album, setAlbum] = useState();
-	const PAGE_SIZE = 25;
+	const [pageSize, setPageSize] = useState(25);
 	const [page, setPage] = useState(1);
-	const [totalSize, setTotalSize] = useState(0);
 	const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
 		columnAccessor: "rank",
 		direction: "asc",
 	});
-	const [pagination, setPagination] = useState("");
-	const [years, setYears] = useState([]);
+	const [selectedYears, setSelectedYears] = useState([]);
 
 	// useEffect(() => {
 	// 	console.log("in useEffect");
@@ -69,22 +66,57 @@ export const Table = () => {
 	// 	cacheData();
 	// }, []);
 
-	const rankingsQuery = useQuery({
-		queryKey: [sortStatus, page],
+	const yearsQuery = useQuery({
+		queryKey: [],
 		queryFn: async () => {
-			setTotalSize(500);
-			console.log("running rankingsQuery");
+			try {
+				let results = await axios.get(`${backendURL}/album/years`);
+				let stringYears = [];
+				results.data.forEach((year) => {
+					stringYears.push(year + "");
+				});
+				return stringYears;
+			} catch (err) {
+				console.log(err);
+			}
+		},
+	});
+
+	const totalAlbumsQuery = useQuery({
+		queryKey: [selectedYears],
+		queryFn: async () => {
+			try {
+				let result = await axios.get(`${backendURL}/album/albumsCount`, {
+					params: {
+						filter: selectedYears,
+					},
+				});
+				console.log(result.data);
+				return result.data;
+			} catch (err) {
+				console.log(err);
+			}
+		},
+	});
+
+	const rankingsQuery = useQuery({
+		queryKey: [sortStatus, page, pageSize, selectedYears],
+		queryFn: async () => {
 			try {
 				// pagination query
 				var albums = [];
 				let results = await axios.get(`${backendURL}/album/rankings`, {
-					params: { size: PAGE_SIZE, page: page, orderBy: sortStatus },
+					params: {
+						size: pageSize,
+						page: page,
+						orderBy: sortStatus,
+						filter: selectedYears,
+					},
 				});
 
 				results.data.forEach((result) => {
 					albums.push(result);
 				});
-
 				return albums;
 			} catch (err) {
 				console.log(err);
@@ -121,20 +153,24 @@ export const Table = () => {
 					{
 						accessor: "year",
 						sortable: true,
-						filter: <MultiSelect data={years} description="Filter by year" />,
+						filter: (
+							<MultiSelect
+								data={yearsQuery.data ? yearsQuery.data : []}
+								description="Filter by year"
+								value={selectedYears}
+								onChange={setSelectedYears}
+								clearable
+								searchable
+							/>
+						),
+						filtering: selectedYears.length > 0,
 					},
 				]}
 				records={rankingsQuery.data ? rankingsQuery.data : []}
 				page={rankingsQuery.data ? page : 0}
-				recordsPerPage={PAGE_SIZE}
-				totalRecords={totalSize}
+				recordsPerPage={pageSize}
+				totalRecords={totalAlbumsQuery.data ? totalAlbumsQuery.data : 500}
 				onPageChange={async (p) => {
-					if (page < p) {
-						setPagination("nextPage");
-					} else if (page > p) {
-						setPagination("prevPage");
-					}
-
 					setPage(p);
 				}}
 				sortStatus={sortStatus}
@@ -145,6 +181,8 @@ export const Table = () => {
 					console.log(event);
 					setAlbum(row);
 				}}
+				recordsPerPageOptions={[10, 15, 20, 25]}
+				onRecordsPerPageChange={setPageSize}
 			/>
 		</>
 	);

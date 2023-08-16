@@ -1,24 +1,12 @@
-import { AppShell, Group, Header } from "@mantine/core";
-import { Logout } from "../components/auth/Logout.tsx";
+import { Stack } from "@mantine/core";
 import { Table } from "../components/Table.tsx";
-import { useAuth } from "../contexts/AuthContext";
+import { ProgressBar } from "../components/ProgressBar.tsx";
 
-const Home = () => {
-	const { currentUser } = useAuth();
-	console.log(currentUser);
+export const Home = () => {
 	return (
-		<AppShell
-			header={
-				<Header height={"64px"}>
-					<Group position="apart">
-						<div>logo</div>
-						<Logout />
-					</Group>
-				</Header>
-			}
-			children={<Table />}
-		/>
+		<Stack>
+			<ProgressBar />
+			<Table />
+		</Stack>
 	);
 };
-
-export default Home;
