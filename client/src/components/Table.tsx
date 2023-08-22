@@ -1,9 +1,10 @@
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { config } from "../constants.ts";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import { AlbumModal } from "./AlbumModal.tsx";
+import { DeleteListenModal } from "./DeleteListenModal.tsx";
 import { MultiSelect } from "@mantine/core";
 import axios from "axios";
 
@@ -11,9 +12,11 @@ const backendURL = "http://localhost:3001";
 
 export const Table = () => {
 	const { currentUser } = useAuth();
+	const queryClient = useQueryClient();
 	const URL = config.url;
 
 	const [album, setAlbum] = useState();
+	const [deleteAlbumListen, setDeleteAlbumListen] = useState();
 	const [pageSize, setPageSize] = useState(25);
 	const [page, setPage] = useState(1);
 	const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
@@ -21,50 +24,6 @@ export const Table = () => {
 		direction: "asc",
 	});
 	const [selectedYears, setSelectedYears] = useState([]);
-
-	// useEffect(() => {
-	// 	console.log("in useEffect");
-	// 	//Runs only on the first render to make sure data is cached
-	// 	async function cacheData() {
-	// 		// perform a query on the cache to make sure it has been created
-	// 		var lastAddedQuery = await db.albums
-	// 			.orderBy("lastModified", "desc")
-	// 			.get({ source: "cache" });
-
-	// 		var isCacheEmpty = lastAddedQuery.size === 0;
-	// 		if (isCacheEmpty) {
-	// 			// if the cache is empty, create it
-	// 			const newCacheQuery = await db.albums
-	// 				.orderBy("lastModified", "desc")
-	// 				.get();
-	// 			// store the most recent update date in local storage
-	// 			localStorage.setItem(
-	// 				"lastModified",
-	// 				newCacheQuery.docs[0].data()["lastModified"]
-	// 			);
-	// 			setTotalSize(newCacheQuery.size);
-	// 			const yrs = new Set();
-	// 			newCacheQuery.forEach((album) => yrs.add(album.data().year));
-	// 			setYears([...yrs]);
-	// 		} else {
-	// 			// otherwise, update the cache
-	// 			localStorage.setItem(
-	// 				"lastModified",
-	// 				lastAddedQuery.docs[0].data()["lastModified"]
-	// 			);
-	// 			const lastModifiedCache = lastAddedQuery.docs[0].data()["lastModified"];
-	// 			const updateCacheQuery = await db.albums
-	// 				.orderBy("lastModified", "desc")
-	// 				.where("lastModified", ">", lastModifiedCache)
-	// 				.get();
-	// 			setTotalSize(lastAddedQuery.size);
-	// 			const yrs = new Set();
-	// 			lastAddedQuery.forEach((album) => yrs.add(album.data().year));
-	// 			setYears([...yrs]);
-	// 		}
-	// 	}
-	// 	cacheData();
-	// }, []);
 
 	const yearsQuery = useQuery({
 		queryKey: [],
@@ -91,7 +50,7 @@ export const Table = () => {
 						filter: selectedYears,
 					},
 				});
-				console.log(result.data);
+				setPage(1);
 				return result.data;
 			} catch (err) {
 				console.log(err);
@@ -99,25 +58,21 @@ export const Table = () => {
 		},
 	});
 
-	const rankingsQuery = useQuery({
-		queryKey: [sortStatus, page, pageSize, selectedYears],
+	const albumsQuery = useQuery({
+		queryKey: ["albums", sortStatus, page, pageSize, selectedYears],
 		queryFn: async () => {
 			try {
 				// pagination query
-				var albums = [];
 				let results = await axios.get(`${backendURL}/album/rankings`, {
 					params: {
 						size: pageSize,
 						page: page,
 						orderBy: sortStatus,
 						filter: selectedYears,
+						user_id: currentUser.id,
 					},
 				});
-
-				results.data.forEach((result) => {
-					albums.push(result);
-				});
-				return albums;
+				return results.data;
 			} catch (err) {
 				console.log(err);
 			}
@@ -125,9 +80,40 @@ export const Table = () => {
 		keepPreviousData: true,
 	});
 
+	const handleAlbumShiftClick = useMutation({
+		mutationFn: async (row) => {
+			try {
+				if (row.listened) {
+					// delete the listen
+					const deleted = await axios.delete(
+						`${backendURL}/album/deleteListen/${currentUser.id + "_" + row._id}`
+					);
+					return deleted;
+				} else {
+					// add a listen
+					const listened = await axios.post(`${backendURL}/album/listen`, {
+						user_id: currentUser.id,
+						album_id: row._id,
+					});
+					return listened;
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		},
+		onSuccess: () => {
+			// Invalidate and refetch
+			queryClient.invalidateQueries({ queryKey: ["albums"] });
+		},
+	});
+
 	return (
 		<>
-			<AlbumModal album={album} setAlbum={setAlbum} />
+			{album && <AlbumModal album={album} setAlbum={setAlbum} />}
+			<DeleteListenModal
+				album={deleteAlbumListen}
+				setAlbum={setDeleteAlbumListen}
+			/>
 			<DataTable
 				columns={[
 					{
@@ -139,6 +125,7 @@ export const Table = () => {
 					},
 					{ accessor: "title", sortable: true },
 					{ accessor: "rank", sortable: true },
+					{ accessor: "rating" },
 					{
 						accessor: "artists",
 						sortable: true,
@@ -166,8 +153,8 @@ export const Table = () => {
 						filtering: selectedYears.length > 0,
 					},
 				]}
-				records={rankingsQuery.data ? rankingsQuery.data : []}
-				page={rankingsQuery.data ? page : 0}
+				records={albumsQuery.data ? albumsQuery.data : []}
+				page={albumsQuery.data ? page : 0}
 				recordsPerPage={pageSize}
 				totalRecords={totalAlbumsQuery.data ? totalAlbumsQuery.data : 500}
 				onPageChange={async (p) => {
@@ -175,14 +162,23 @@ export const Table = () => {
 				}}
 				sortStatus={sortStatus}
 				onSortStatusChange={setSortStatus}
-				fetching={rankingsQuery.isLoading}
+				fetching={albumsQuery.isLoading}
 				loaderVariant="bars"
 				onRowClick={(row, rowIndex, event) => {
-					console.log(event);
-					setAlbum(row);
+					if (event.shiftKey) {
+						if (row.listened) {
+							setDeleteAlbumListen(row);
+						} else {
+							handleAlbumShiftClick.mutate(row);
+						}
+					} else {
+						setAlbum(row);
+					}
 				}}
 				recordsPerPageOptions={[10, 15, 20, 25]}
 				onRecordsPerPageChange={setPageSize}
+				textSelectionDisabled
+				rowStyle={({ listened }) => (listened ? { color: "grey" } : undefined)}
 			/>
 		</>
 	);

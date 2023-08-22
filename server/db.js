@@ -15,11 +15,13 @@ async function connectToDatabase() {
 		// Connect the client to the server
 		await client.connect();
 		console.log("Connected to MongoDB");
-		let db = client.db("rollingtunetracker");
-		return db;
 	} catch (err) {
 		console.log("Error connecting to MongoDB: ", err);
 	}
 }
 
-export { connectToDatabase };
+connectToDatabase();
+
+const db = client.db("rollingtunetracker");
+
+export { db };
