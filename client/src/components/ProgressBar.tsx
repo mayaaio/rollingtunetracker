@@ -9,6 +9,7 @@ export const ProgressBar = () => {
 	const { currentUser } = useAuth();
 
 	const progressQuery = useQuery({
+		queryKey: ["albums"],
 		queryFn: async () => {
 			try {
 				let results = await axios.get(`${backendURL}/album/totalRankings`, {
@@ -20,13 +21,17 @@ export const ProgressBar = () => {
 			}
 		},
 	});
+
 	return (
 		<>
 			<Progress
 				color="dark"
 				value={progressQuery.data ? (progressQuery.data / 500) * 100 : 0}
 			/>
-			<Text>{progressQuery.data} albums listened to</Text>
+			<Text>
+				{progressQuery.data} albums listened to, {500 - progressQuery.data}{" "}
+				remaining!
+			</Text>
 		</>
 	);
 };

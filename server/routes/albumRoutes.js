@@ -1,10 +1,14 @@
 import express from "express";
 const router = express.Router();
 import {
+	deleteListen,
 	getAlbums,
 	getAlbumsCount,
+	getRanking,
+	getTotalListened,
 	getYears,
-	getTotalRankings,
+	listen,
+	updateListen,
 } from "../database/albums.js";
 
 router.get("/rankings", async (req, res) => {
@@ -22,8 +26,23 @@ router.get("/rankings", async (req, res) => {
 			queryParams.filter = req.query.filter.map((x) => parseInt(x));
 		}
 
-		const rankings = await getAlbums(queryParams);
-		res.json(rankings);
+		var rankings = await getAlbums(queryParams);
+
+		const updatedRankings = await Promise.all(
+			rankings.map(async function (item) {
+				const userRanking = await getRanking({
+					album_id: item._id,
+					user_id: req.query.user_id,
+				});
+				if (userRanking) {
+					item["listened"] = true;
+					item["rating"] = userRanking.rating;
+					item["notes"] = userRanking.notes;
+				}
+				return item;
+			})
+		);
+		res.json(updatedRankings);
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ error: "Failed to get rankings" });
@@ -58,12 +77,68 @@ router.get("/years", async (req, res) => {
 router.get("/totalRankings", async (req, res) => {
 	try {
 		//TODO - make sure user exists
-
-		const totalRankings = await getTotalRankings(req.query.user);
+		const totalRankings = await getTotalListened(req.query.user);
 		res.json(totalRankings);
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ error: "Failed to get total rankings" });
+	}
+});
+
+router.post("/listen", async (req, res) => {
+	try {
+		//TODO - make sure user and album exist?
+		const params = {
+			_id: req.body.user_id + "_" + req.body.album_id,
+			user_id: req.body.user_id,
+			album_id: req.body.album_id,
+		};
+		if (req.body.notes) {
+			params["notes"] = req.body.notes;
+		}
+		if (req.body.rating) {
+			params["rating"] = req.body.rating;
+		}
+
+		const listened = await listen(params);
+		res.json(listened);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+router.put("/updateListen", async (req, res) => {
+	try {
+		//TODO - make sure user and album exist?
+		console.log("updating listennnn");
+		console.log(req.body);
+		const albumParams = {
+			_id: req.body.user_id + "_" + req.body.album_id,
+			user_id: req.body.user_id,
+			album_id: req.body.album_id,
+		};
+		const listenParams = {};
+		if (req.body.notes) {
+			listenParams["notes"] = req.body.notes;
+		}
+		if (req.body.rating) {
+			listenParams["rating"] = req.body.rating;
+		}
+
+		const listened = await updateListen(albumParams, listenParams);
+		res.json(listened);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+router.delete("/deleteListen/:id", async (req, res) => {
+	try {
+		//TODO - make sure user and album exist?
+		const deleted = await deleteListen(req.params.id);
+		res.json(deleted);
+	} catch (err) {
+		console.log(err);
 	}
 });
 
