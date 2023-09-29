@@ -75,6 +75,24 @@ export const AlbumModal = ({ album, setAlbum }) => {
 		},
 	});
 
+	const handleEditListen = useMutation({
+		mutationFn: async (album) => {
+			// update the listen
+			const updated = await axios.put(`${backendURL}/album/updateListen/`, {
+				user_id: currentUser.id,
+				album_id: album._id,
+				notes: notes,
+				rating: rating,
+			});
+			return updated;
+		},
+		onSuccess: () => {
+			// Invalidate and refetch
+			setAlbum();
+			queryClient.invalidateQueries({ queryKey: ["albums"] });
+		},
+	});
+
 	return (
 		album && (
 			<>
@@ -146,7 +164,7 @@ export const AlbumModal = ({ album, setAlbum }) => {
 									<Box>
 										<Stack justify="space-between">
 											<Stack justify="flex-start">
-												{!album.rating && (
+												{
 													<NumberInput
 														label="Album rating"
 														variant="unstyled"
@@ -158,14 +176,9 @@ export const AlbumModal = ({ album, setAlbum }) => {
 														precision={1}
 														disabled={!editMode}
 													/>
-												)}
-												{album.rating && (
-													<Stack>
-														<Text>Album rating</Text>
-														<Text>{album.rating}</Text>
-													</Stack>
-												)}
-												{!album.notes && (
+												}
+
+												{
 													<Textarea
 														autosize
 														minRows={2}
@@ -177,14 +190,7 @@ export const AlbumModal = ({ album, setAlbum }) => {
 														}
 														disabled={!editMode}
 													/>
-												)}
-
-												{album.notes && (
-													<Stack>
-														<Text>Album notes</Text>
-														<Text>{album.notes}</Text>
-													</Stack>
-												)}
+												}
 											</Stack>
 											<Group justify="flex-end">
 												{!album.listened && (
@@ -212,13 +218,21 @@ export const AlbumModal = ({ album, setAlbum }) => {
 													<Button
 														color="red"
 														variant="outline"
-														onClick={() => setEditMode(false)}
+														onClick={() => {
+															setRating(album?.rating ? album.rating : "");
+															setNotes(album?.notes ? album.notes : "");
+															setEditMode(false);
+														}}
 													>
 														Discard edits
 													</Button>
 												)}
 												{album.listened && editMode && (
-													<Button>Update listen</Button>
+													<Button
+														onClick={() => handleEditListen.mutate(album)}
+													>
+														Update listen
+													</Button>
 												)}
 											</Group>
 										</Stack>
