@@ -1,4 +1,5 @@
 import {
+	ActionIcon,
 	Box,
 	Button,
 	Divider,
@@ -14,6 +15,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useAuth } from "../contexts/AuthContext";
+import { IconBrandSpotify } from "@tabler/icons-react";
 
 export const AlbumModal = ({ album, setAlbum }) => {
 	const { currentUser } = useAuth();
@@ -24,6 +26,21 @@ export const AlbumModal = ({ album, setAlbum }) => {
 	const [editMode, setEditMode] = useState(!album.listened);
 	const queryClient = useQueryClient();
 	const backendURL = "http://localhost:3001";
+
+	const handleRemoveListen = useMutation({
+		mutationFn: async (album) => {
+			// delete the listen
+			const deleted = await axios.delete(
+				`${backendURL}/album/deleteListen/${currentUser.id + "_" + album._id}`
+			);
+			return deleted;
+		},
+		onSuccess: () => {
+			// Invalidate and refetch
+			setAlbum();
+			queryClient.invalidateQueries({ queryKey: ["albums"] });
+		},
+	});
 
 	const handleListenToAlbum = useMutation({
 		mutationFn: async (album) => {
@@ -84,7 +101,6 @@ export const AlbumModal = ({ album, setAlbum }) => {
 							<Group grow align="stretch">
 								<img src={album.img} alt="album cover" width="50%" />
 								<Stack>
-									{/* <Stack justify="flex-start" spacing="0"> */}
 									<Box>
 										<Text
 											sx={{
@@ -96,79 +112,117 @@ export const AlbumModal = ({ album, setAlbum }) => {
 										>
 											{album.rank}
 										</Text>
-										<Text>
-											{album.artists.map((artist) => artist)}, {album.title}
+										<Text
+											sx={{
+												fontFamily: "Publico Banner Web Ultra Regular",
+											}}
+											fw={700}
+										>
+											{album.artists.map((artist) => artist)}, '{album.title}'
 										</Text>
-										<Text>label, {album.year}</Text>
-									</Box>
-									{/* </Stack> */}
-									<Divider />
-									{/* <Stack justify="space-between"> */}
-									<Box>
-										{!album.rating && (
-											<NumberInput
-												label="Album rating"
-												variant="unstyled"
-												placeholder="Your rating"
-												value={rating}
-												onChange={setRating}
-												min={0}
-												max={10}
-												precision={1}
-											/>
-										)}
-										{album.rating && (
-											<Stack>
-												<Text>Album rating</Text>
-												<Text>{album.rating}</Text>
-											</Stack>
-										)}
-										{!album.notes && (
-											<Textarea
-												autosize
-												minRows={2}
-												label="Album notes"
-												placeholder="Add your album notes"
-												value={notes}
-												onChange={(event) =>
-													setNotes(event.currentTarget.value)
+										<Text
+											sx={{
+												fontFamily: "Publico Banner Web Ultra Regular",
+											}}
+											fw={700}
+										>
+											{album.labels.map((label) => label + ", ")}
+											{album.year}
+										</Text>
+										{album.spotifyUri && (
+											<ActionIcon
+												aria-label="Spotify link icon"
+												component="a"
+												href={
+													"https://open.spotify.com/album/" + album.spotifyUri
 												}
-											/>
+												target="_blank"
+											>
+												<IconBrandSpotify />
+											</ActionIcon>
 										)}
-
-										{album.notes && (
-											<Stack>
-												<Text>Album notes</Text>
-												<Text>{album.notes}</Text>
-											</Stack>
-										)}
-										<Group>
-											{!album.listened && (
-												<Button
-													onClick={() => handleListenToAlbum.mutate(album)}
-												>
-													Mark album as listened to
-												</Button>
-											)}
-											{album.listened && (
-												<Button
-													color="red"
-													variant="outline"
-													onClick={() => handleListenToAlbum.mutate(album)}
-												>
-													Remove listen
-												</Button>
-											)}
-											{album.listened && (
-												<Button
-													onClick={() => handleListenToAlbum.mutate(album)}
-												>
-													Update listen
-												</Button>
-											)}
-										</Group>
 									</Box>
-									{/* </Stack> */}
+									<Divider />
+									<Box>
+										<Stack justify="space-between">
+											<Stack justify="flex-start">
+												{!album.rating && (
+													<NumberInput
+														label="Album rating"
+														variant="unstyled"
+														placeholder="Your rating"
+														value={rating}
+														onChange={setRating}
+														min={0}
+														max={10}
+														precision={1}
+														disabled={!editMode}
+													/>
+												)}
+												{album.rating && (
+													<Stack>
+														<Text>Album rating</Text>
+														<Text>{album.rating}</Text>
+													</Stack>
+												)}
+												{!album.notes && (
+													<Textarea
+														autosize
+														minRows={2}
+														label="Album notes"
+														placeholder="Add your album notes"
+														value={notes}
+														onChange={(event) =>
+															setNotes(event.currentTarget.value)
+														}
+														disabled={!editMode}
+													/>
+												)}
+
+												{album.notes && (
+													<Stack>
+														<Text>Album notes</Text>
+														<Text>{album.notes}</Text>
+													</Stack>
+												)}
+											</Stack>
+											<Group justify="flex-end">
+												{!album.listened && (
+													<Button
+														onClick={() => handleListenToAlbum.mutate(album)}
+													>
+														Mark album as listened to
+													</Button>
+												)}
+												{album.listened && !editMode && (
+													<Button
+														color="red"
+														variant="outline"
+														onClick={() => handleRemoveListen.mutate(album)}
+													>
+														Remove listen
+													</Button>
+												)}
+												{album.listened && !editMode && (
+													<Button onClick={() => setEditMode(true)}>
+														Edit listen
+													</Button>
+												)}
+												{album.listened && editMode && (
+													<Button
+														color="red"
+														variant="outline"
+														onClick={() => setEditMode(false)}
+													>
+														Discard edits
+													</Button>
+												)}
+												{album.listened && editMode && (
+													<Button>Update listen</Button>
+												)}
+											</Group>
+										</Stack>
+									</Box>
 								</Stack>
 							</Group>
 						</Modal>

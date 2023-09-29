@@ -36,7 +36,7 @@ export const DeleteListenModal = ({ album, setAlbum }) => {
 			<Modal opened={album} onClose={() => setAlbum()} withCloseButton={false}>
 				Are you sure you want to delete your listen of {album.title} by{" "}
 				{album.artists.map((artist) => artist).join(", ")}?
-				<Group position="apart">
+				<Group position="apart" py="sm">
 					<Button variant="outline" onClick={() => setAlbum()}>
 						No, go back
 					</Button>
