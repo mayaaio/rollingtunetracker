@@ -20,7 +20,6 @@ function Signup({ setSignIn }) {
 
 		try {
 			const result = await signup(form.values.email, form.values.password);
-			console.log(result);
 		} catch (err) {
 			console.log(err);
 			console.log(err.error);

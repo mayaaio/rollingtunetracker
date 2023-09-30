@@ -5,7 +5,6 @@ import Signup from "../components/auth/Signup.tsx";
 
 const NoAuth = () => {
 	const [signIn, setSignIn] = useState(true);
-	console.log("no auth");
 
 	return (
 		<Center my={40}>

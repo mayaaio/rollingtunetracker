@@ -1,5 +1,7 @@
 import { Modal } from "@mantine/core";
 
 export const SettingsModal = ({ opened, onClose }) => {
-	return <Modal opened={opened} onClose={onClose}></Modal>;
+	return (
+		<Modal opened={opened} onClose={onClose} title="Settings & Privacy"></Modal>
+	);
 };

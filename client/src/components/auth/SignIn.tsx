@@ -26,7 +26,7 @@ function SignIn({ setSignIn }) {
 			const errMessage = err.error;
 			//TODO - Are there user not found/wrong password specific errors in mongodb?
 			if (errMessage === "invalid username/password") {
-				form.setFieldError("email", "invalid username/password");
+				form.setFieldError("email", "Invalid username/password");
 			} else {
 				form.setFieldError("password", "Unable to log in");
 			}

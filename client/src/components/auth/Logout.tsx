@@ -13,7 +13,6 @@ export const Logout = () => {
 			// redirected to the login page because of the <PrivateRoute /> component.
 			if (loggedOut) {
 				window.location.reload();
-				console.log(currentUser);
 			}
 		} catch (error) {
 			alert(error);
