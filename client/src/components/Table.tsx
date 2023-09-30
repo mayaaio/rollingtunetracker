@@ -3,8 +3,8 @@ import { config } from "../constants.ts";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
-import { AlbumModal } from "./AlbumModal.tsx";
-import { DeleteListenModal } from "./DeleteListenModal.tsx";
+import { AlbumModal } from "./modals/AlbumModal.tsx";
+import { DeleteListenModal } from "./modals/DeleteListenModal.tsx";
 import { MultiSelect } from "@mantine/core";
 import axios from "axios";
 
@@ -125,7 +125,7 @@ export const Table = () => {
 					},
 					{ accessor: "title", sortable: true },
 					{ accessor: "rank", sortable: true },
-					{ accessor: "rating" },
+					{ accessor: "rating", sortable: true },
 					{
 						accessor: "artists",
 						sortable: true,

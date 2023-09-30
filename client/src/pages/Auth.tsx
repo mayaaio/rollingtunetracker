@@ -1,8 +1,9 @@
-import { ActionIcon, AppShell, Group, Header } from "@mantine/core";
+import { AppShell, Group, Header } from "@mantine/core";
 import { Logout } from "../components/auth/Logout.tsx";
 import { Home } from "./Home.tsx";
 import { ToggleColorSchemeButton } from "../components/ToggleColorSchemeButton.tsx";
-import { IconSettings } from "@tabler/icons-react";
+import { Profile } from "../components/Profile.tsx";
+import { Settings } from "../components/Settings.tsx";
 
 const Auth = () => {
 	return (
@@ -13,10 +14,9 @@ const Auth = () => {
 						<div>logo</div>
 						<Group>
 							<ToggleColorSchemeButton />
+							<Settings />
+							<Profile />
 							<Logout />
-							<ActionIcon>
-								<IconSettings />
-							</ActionIcon>
 						</Group>
 					</Group>
 				</Header>
