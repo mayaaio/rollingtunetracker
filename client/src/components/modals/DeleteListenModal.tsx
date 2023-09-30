@@ -1,7 +1,7 @@
 import { Button, Group, Modal } from "@mantine/core";
 import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export const DeleteListenModal = ({ album, setAlbum }) => {
 	const backendURL = "http://localhost:3001";

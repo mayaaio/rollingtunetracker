@@ -110,7 +110,6 @@ router.post("/listen", async (req, res) => {
 router.put("/updateListen", async (req, res) => {
 	try {
 		//TODO - make sure user and album exist?
-		console.log("updating listennnn");
 		console.log(req.body);
 		const albumParams = {
 			_id: req.body.user_id + "_" + req.body.album_id,
