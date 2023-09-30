@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
 		console.log(email);
 		console.log(password);
 		try {
-			await app.emailPasswordAuth.registerUser(email, password);
+			await app.emailPasswordAuth.registerUser({ email, password });
 			return login(email, password);
 		} catch (error) {
 			throw error;
