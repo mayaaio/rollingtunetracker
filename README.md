@@ -1,6 +1,6 @@
 # 🎶 RollingTuneTracker
 
-A full-stack music album tracker where users can browse, filter, and manage their album listening history.
+**RollingTuneTracker** is a full-stack music album tracker I built to help a friend log and rate every album on *Rolling Stone’s “Top 500 Albums of All Time”* list. I used Python and Pandas to scrape and clean the album data, enriched it with metadata from Wikipedia and Spotify, then structured and stored it in MongoDB Atlas. On the backend, I used Node.js and Express, and built the frontend in React with TypeScript and the Mantine component library. The app tracks listening progress, shows album info, and lets users add comments and rankings. I built it end-to-end, from data pipeline to deployment, and recently polished it so it’s easy to demo and iterate on.
 
 ## 🚀 Live Demo
 
