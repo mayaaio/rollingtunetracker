@@ -1,70 +1,64 @@
-# Getting Started with Create React App
+# 🎶 RollingTuneTracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack music album tracker where users can browse, filter, and manage their album listening history.
 
-## Available Scripts
+## 🚀 Live Demo
 
-In the project directory, you can run:
+- **Frontend (Vercel)**: [https://rollingtunetracker.vercel.app](https://rollingtunetracker.vercel.app)
+- **Backend (Render)**: [https://rollingtunetracker.onrender.com](https://rollingtunetracker.onrender.com)
 
-### `npm start`
+## 🛠️ Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend**: React + TypeScript + Mantine + React Query
+- **Backend**: Express.js (Node.js)
+- **Database**: MongoDB Atlas
+- **Deployment**: Vercel (frontend) + Render (backend)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🧪 Local Development
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js & npm
+- MongoDB Atlas URI
+- `.env` file in `/server`:
+  ```
+  MONGODB_URI=your_connection_string
+  ```
 
-### `npm run build`
+### Run Backend
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+cd server
+npm install
+npm run dev
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Run Frontend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+cd client
+npm install
+npm start
+```
 
-### `npm run eject`
+## 🌐 Environment Variables
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### `/client/.env`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```env
+REACT_APP_API_URL=https://rollingtunetracker.onrender.com
+REACT_APP_APP_ID=your-app-id
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### `/server/.env`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```env
+MONGODB_URI=your_connection_string
+```
 
-## Learn More
+## ✨ Features
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Filter and sort albums by year, artist, and rating
+- Mark albums as listened or not listened
+- Responsive UI with custom theming
+- React Query for fast and efficient data fetching
