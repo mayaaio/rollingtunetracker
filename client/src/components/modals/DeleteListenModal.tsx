@@ -3,9 +3,10 @@ import axios from "axios";
 import { useMutation, useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { Album } from "../../types/Albums";
+import { config } from "../../constants";
 
 export const DeleteListenModal = ({ album, setAlbum }) => {
-  const backendURL = "http://localhost:3001";
+  const backendURL = config.url;
   const { currentUser } = useAuth();
   const queryClient = useQueryClient();
 

@@ -9,7 +9,7 @@ import { MultiSelect } from "@mantine/core";
 import axios from "axios";
 import { Album } from "../types/Albums";
 
-const backendURL = "http://localhost:3001";
+const backendURL = config.url;
 
 export const Table = () => {
   const { currentUser } = useAuth();

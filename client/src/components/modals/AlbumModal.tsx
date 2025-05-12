@@ -17,6 +17,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { IconBrandSpotify } from "@tabler/icons-react";
 import { Album } from "../../types/Albums";
+import { config } from "../../constants";
 
 export const AlbumModal = ({ album, setAlbum }) => {
   const { currentUser } = useAuth();
@@ -26,7 +27,7 @@ export const AlbumModal = ({ album, setAlbum }) => {
   );
   const [editMode, setEditMode] = useState(!album.listened);
   const queryClient = useQueryClient();
-  const backendURL = "http://localhost:3001";
+  const backendURL = config.url;
 
   const handleRemoveListen = useMutation({
     mutationFn: async (album: Album) => {
