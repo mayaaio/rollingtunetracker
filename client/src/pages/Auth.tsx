@@ -1,4 +1,4 @@
-import { AppShell, Group } from "@mantine/core";
+import { AppShell, Group, Image } from "@mantine/core";
 import { Logout } from "../components/auth/LogoutBtn";
 import { Home } from "./HomePage";
 import { ToggleColorSchemeButton } from "../components/ColorToggle";
@@ -11,7 +11,12 @@ const Auth = () => {
     <AppShell header={{ height: 64 }}>
       <AppShell.Header>
         <Group justify="apart" px="sm" py="sm">
-          <div>logo</div>
+          <Image
+            src="/assets/rollingtunetracker-text.png"
+            alt="Rolling TuneTracker Logo"
+            height={40}
+            fit="contain"
+          />
           <Group>
             <ToggleColorSchemeButton />
             <Settings />
