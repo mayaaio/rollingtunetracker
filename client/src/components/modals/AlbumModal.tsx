@@ -137,6 +137,18 @@ export const AlbumModal = ({ album, setAlbum }) => {
                   component="a"
                   href={"https://open.spotify.com/album/" + album.spotifyUri}
                   target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "#1DB954",
+                    "&:focus-visible": {
+                      outline: "none",
+                      boxShadow: "none",
+                    },
+                    "&:hover": {
+                      backgroundColor: "rgba(29, 185, 84, 0.1)",
+                      transform: "scale(1.05)",
+                    },
+                  }}
                 >
                   <IconBrandSpotify />
                 </ActionIcon>

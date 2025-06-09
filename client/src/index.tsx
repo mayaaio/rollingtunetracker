@@ -24,7 +24,35 @@ function MantineWrapper() {
   return (
     <MantineProvider
       defaultColorScheme="auto"
-      theme={{ respectReducedMotion: false }}
+      theme={{
+        respectReducedMotion: false,
+        components: {
+          Button: {
+            defaultProps: {
+              variant: "light",
+              color: "gray",
+              radius: "md",
+            },
+          },
+          ActionIcon: {
+            defaultProps: {
+              size: "lg",
+              variant: "subtle",
+              radius: "xl",
+              color: "gray",
+            },
+            styles: (theme) => ({
+              root: {
+                transition: "transform 0.15s ease",
+                "&:hover": {
+                  backgroundColor: theme.colors.gray[0],
+                  transform: "scale(1.05)",
+                },
+              },
+            }),
+          },
+        },
+      }}
     >
       <ColorSchemeHotkeys /> {/* hot-key helper */}
       <Root /> {/* the rest of your app */}
