@@ -30,7 +30,7 @@ function MantineWrapper() {
           Button: {
             defaultProps: {
               variant: "light",
-              color: "gray",
+              color: "dark",
               radius: "md",
             },
           },

@@ -73,7 +73,11 @@ function Signup({ setSignIn }) {
           {...form.getInputProps("confirmPassword")}
         />
         <Button type="submit">Sign up</Button>
-        <Text onClick={() => setSignIn(true)} size="xs">
+        <Text
+          onClick={() => setSignIn(true)}
+          size="xs"
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+        >
           Click to sign in
         </Text>
       </Stack>
