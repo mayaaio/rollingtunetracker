@@ -171,6 +171,7 @@ export const Table = () => {
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
         fetching={albumsQuery.isLoading}
+        style={{ userSelect: "none" }}
         onRowClick={({ record, index, event }) => {
           if (event.shiftKey) {
             if (record.listened) {

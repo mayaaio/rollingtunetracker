@@ -16,9 +16,9 @@ app.use(express.json());
 app.use("/album", albumRoutes);
 
 app.get("/", (req, res) => {
-	res.send("Hey this is my API running");
+  res.send("Hey this is my API running");
 });
 
 app.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
