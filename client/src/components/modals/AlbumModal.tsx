@@ -149,6 +149,10 @@ export const AlbumModal = ({ album, setAlbum }) => {
                       transform: "scale(1.05)",
                     },
                   }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.outline = "none";
+                  }}
                 >
                   <IconBrandSpotify />
                 </ActionIcon>
